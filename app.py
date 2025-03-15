@@ -1,18 +1,17 @@
 import os
 import openai
 import requests
-import moviepy.editor as mp
+import ffmpeg
 from googleapiclient.discovery import build
-from moviepy.video.io.ImageSequenceClip import ImageSequenceClip
 from elevenlabs import generate, save
 from PIL import Image
 from flask import Flask, render_template, jsonify
 import threading
 
-# API Keys (Hardcoded for single user)
-OPENAI_API_KEY = "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"
-ELEVENLABS_API_KEY = "sk_73470a04ceed61f3f66f26cea8bf81e8c80b1180ab122abe"
-YOUTUBE_API_KEY = "AIzaSyC0e1fxRJd1gxR4iSwKIkFP9zqTu81HDv4"
+# Load API keys from environment variables
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
+YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 
 app = Flask(__name__)
 status = {"step": "Idle", "youtube_link": ""}
@@ -57,11 +56,15 @@ def create_video(image_path, audio_path):
     img = img.resize((1920, 1080))
     img.save("resized_story_image.png")
     
-    video_clip = ImageSequenceClip(["resized_story_image.png"] * 100, fps=25)
-    audio_clip = mp.AudioFileClip(audio_path)
-    video_clip = video_clip.set_audio(audio_clip)
-    video_clip.write_videofile("story_video.mp4", codec="libx264", audio_codec="aac")
-    return "story_video.mp4"
+    output_video = "story_video.mp4"
+    (
+        ffmpeg
+        .input("resized_story_image.png", loop=1, t=10)
+        .input(audio_path)
+        .output(output_video, vcodec="libx264", acodec="aac", pix_fmt="yuv420p")
+        .run()
+    )
+    return output_video
 
 def upload_to_youtube(video_path, title, description):
     status["step"] = "Uploading to YouTube"
