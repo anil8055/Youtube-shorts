@@ -1,0 +1,7 @@
+openai
+requests
+moviepy
+google-api-python-client
+elevenlabs
+pillow
+flask
