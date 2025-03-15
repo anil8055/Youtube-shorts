@@ -10,9 +10,9 @@ from flask import Flask, render_template, jsonify
 import threading
 
 # API Keys (Hardcoded for single user)
-OPENAI_API_KEY = "your_openai_api_key"
-ELEVENLABS_API_KEY = "your_elevenlabs_api_key"
-YOUTUBE_API_KEY = "your_youtube_api_key"
+OPENAI_API_KEY = "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"
+ELEVENLABS_API_KEY = "sk_73470a04ceed61f3f66f26cea8bf81e8c80b1180ab122abe"
+YOUTUBE_API_KEY = "AIzaSyC0e1fxRJd1gxR4iSwKIkFP9zqTu81HDv4"
 
 app = Flask(__name__)
 status = {"step": "Idle", "youtube_link": ""}
